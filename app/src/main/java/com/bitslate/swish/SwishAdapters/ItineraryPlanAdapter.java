@@ -71,7 +71,12 @@ public class ItineraryPlanAdapter extends RecyclerView.Adapter<ItineraryPlanAdap
                         if(list.get(position).user_id != prefs.getUser().id) {
                             Toast.makeText(context, "Cannot delete this trip.\nOnly the creator can delete.", Toast.LENGTH_LONG).show();
                         }else{
-
+                            list.get(position).delete();
+                            dbAdapter.open();
+                            dbAdapter.removePlan(list.get(position).id);
+                            dbAdapter.close();
+                            list.remove(position);
+                            ItineraryPlanAdapter.this.notifyDataSetChanged();
                         }
                     }
                 });

@@ -13,7 +13,10 @@ import com.bitslate.swish.SwishAdapters.RequestAdapter;
 import com.bitslate.swish.SwishUtilities.Config;
 import com.bitslate.swish.SwishUtilities.MyApplication;
 import com.bitslate.swish.SwishUtilities.SwishPreferences;
+import com.bitslate.swish.SwishUtilities.SwishRequest;
 import com.bitslate.swish.SwishUtilities.VolleySingleton;
+
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -99,5 +102,21 @@ public class PlanItem {
             }
         };
         VolleySingleton.getInstance().getRequestQueue().add(stringRequest);
+    }
+
+    public void delete() {
+        String url = Config.SWISH_API_URL+"/deletetrip?plan_id="+id;
+        SwishRequest swishRequest = new SwishRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.d("option", response.toString());
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("option", error.toString());
+            }
+        }, MyApplication.getAppContext());
+        VolleySingleton.getInstance().getRequestQueue().add(swishRequest);
     }
 }
