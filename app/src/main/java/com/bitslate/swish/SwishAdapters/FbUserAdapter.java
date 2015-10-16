@@ -46,7 +46,7 @@ public class FbUserAdapter extends RecyclerView.Adapter<FbUserAdapter.FbUserView
     @Override
     public void onBindViewHolder(final FbUserViewHolder holder, int position) {
         final User obj = list.get(position);
-        Glide.with(context).load("https://graph.facebook.com/"+obj.id+"/picture").into(holder.imageView);
+        Glide.with(context).load("https://graph.facebook.com/"+obj.fb_id+"/picture").into(holder.imageView);
         holder.name.setText(obj.fname);
         if(obj.plans.size() == 0) {
             holder.status.setImageDrawable(context.getResources().getDrawable(R.drawable.circle_grey_outline));

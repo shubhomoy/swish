@@ -1,14 +1,17 @@
 package com.bitslate.swish;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -154,7 +157,16 @@ public class FriendsActivity extends AppCompatActivity {
                 finish();
                 break;
             case R.id.help:
-
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setView(LayoutInflater.from(this).inflate(R.layout.status_help, null));
+                builder.setTitle("Help");
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+                builder.create().show();
                 break;
         }
         return super.onOptionsItemSelected(item);

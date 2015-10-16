@@ -8,7 +8,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginTop="20dp"
         android:orientation="horizontal">
 
         <ImageView
@@ -31,22 +31,45 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginTop="20dp"
         android:orientation="horizontal">
 
         <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:src="@drawable/circle_grey"/>
+            android:src="@drawable/circle_green"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Added but not accepted"
+            android:text="Added and accepted"
             android:textColor="#2e2e2e"
             android:textSize="15sp"
             android:layout_marginLeft="10dp"
             android:layout_gravity="center"/>
     </LinearLayout>
 
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/circle_red"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Added but declined"
+            android:textColor="#2e2e2e"
+            android:textSize="15sp"
+            android:layout_marginLeft="10dp"
+            android:layout_gravity="center"/>
+    </LinearLayout>
 </LinearLayout>

@@ -165,6 +165,11 @@ public class PlanListActivity extends AppCompatActivity {
                     JSONArray jsonArray = new JSONArray(jsonObject.getString("data"));
                     for(int i=0; i<jsonArray.length(); i++) {
                         PlanItem planItem = gson.fromJson(jsonArray.getJSONObject(i).toString(), PlanItem.class);
+                        try{
+                            if(planItem.pivot.status == 0 || planItem.pivot.status == -1)continue;
+                        }catch (NullPointerException e){
+
+                        }
                         list.add(planItem);
                         dbAdapter.insertNewItinerary(planItem);
                     }
@@ -285,9 +290,15 @@ public class PlanListActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.notification:
-                startActivity(new Intent(PlanListActivity.this, RequestActivity.class));
+                startActivityForResult(new Intent(PlanListActivity.this, RequestActivity.class), 1);
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        loadRemotePlans();
     }
 }

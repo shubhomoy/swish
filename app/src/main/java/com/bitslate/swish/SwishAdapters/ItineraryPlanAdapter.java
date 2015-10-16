@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,26 +67,7 @@ public class ItineraryPlanAdapter extends RecyclerView.Adapter<ItineraryPlanAdap
                 builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        dbAdapter.open();
-                        dbAdapter.removePlan(list.get(position).id);
-                        File file = new File(Environment.getExternalStorageDirectory().toString()+"/SwishData/"+list.get(position).id);
-                        if(file.isDirectory()){
-                            String files[] = file.list();
-
-                            for (String temp : files) {
-                                //construct the file structure
-                                File fileDelete = new File(file, temp);
-                                fileDelete.delete();
-                            }
-
-                            //check the directory again, if empty then delete it
-                            if (file.list().length == 0) {
-                                file.delete();
-                            }
-                        }
-                        list.remove(position);
-                        dbAdapter.close();
-                        ItineraryPlanAdapter.this.notifyDataSetChanged();
+                        Log.d("option", list.get(position).creator.fname);
                     }
                 });
                 builder.setNegativeButton("No", new DialogInterface.OnClickListener() {

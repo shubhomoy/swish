@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.bitslate.swish.R;
 import com.bitslate.swish.SwishObjects.User;
+import com.bitslate.swish.SwishUtilities.SwishPreferences;
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
@@ -22,11 +23,13 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendVi
     ArrayList<User> list;
     Context context;
     int planId;
+    SwishPreferences prefs;
 
     public FriendsAdapter(Context context, ArrayList<User> list, int planId) {
         this.list = list;
         this.context = context;
         this.planId = planId;
+        prefs = new SwishPreferences(context);
     }
 
     @Override
@@ -39,8 +42,11 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.FriendVi
     @Override
     public void onBindViewHolder(FriendViewHolder holder, int position) {
         User obj = list.get(position);
-        Glide.with(context).load("https://graph.facebook.com/"+obj.id+"/picture").into(holder.imageView);
+        Glide.with(context).load("https://graph.facebook.com/"+obj.fb_id+"/picture").into(holder.imageView);
         holder.name.setText(obj.fname);
+        if(obj.id == prefs.getUser().id){
+            holder.name.setText("you");
+        }
         if(obj.pivot.status == 0) {
             holder.status.setImageDrawable(context.getResources().getDrawable(R.drawable.circle_grey));
         }else if(obj.pivot.status == 1){

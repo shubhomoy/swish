@@ -89,6 +89,7 @@ public class RequestActivity extends AppCompatActivity {
                     JSONArray jsonArray = new JSONArray(response.getString("data"));
                     for(int i=0; i<jsonArray.length(); i++) {
                         PlanItem planItem = gson.fromJson(jsonArray.getJSONObject(i).toString(), PlanItem.class);
+                        if(planItem.creator.id == prefs.getUser().id)continue;
                         list.add(planItem);
                     }
                     adapter.notifyDataSetChanged();
