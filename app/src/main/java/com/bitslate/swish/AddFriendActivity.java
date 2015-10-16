@@ -105,7 +105,8 @@ public class AddFriendActivity extends AppCompatActivity{
                         noResult.setVisibility(View.VISIBLE);
                         recyclerView.setVisibility(View.GONE);
                     }
-                    Toast.makeText(AddFriendActivity.this, "Something went wrong", Toast.LENGTH_LONG).show();
+                    Toast.makeText(AddFriendActivity.this, "Connection timeout", Toast.LENGTH_LONG).show();
+                    finish();
                 }
             }
         }, new Response.ErrorListener() {

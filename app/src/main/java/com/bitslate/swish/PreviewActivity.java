@@ -1,5 +1,6 @@
 package com.bitslate.swish;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
@@ -11,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -25,7 +27,10 @@ import com.bitslate.swish.SwishUtilities.SwishRequest;
 import com.bitslate.swish.SwishUtilities.VolleySingleton;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
+import com.google.gson.Gson;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -52,6 +57,9 @@ public class PreviewActivity extends AppCompatActivity {
     SwishPreferences prefs;
     com.getbase.floatingactionbutton.FloatingActionButton addFlight, addBus, addHotel;
     FloatingActionsMenu addBtn;
+    ProgressDialog progressDialog;
+
+    int loadedEntities = 0;
 
     void instantiate() {
         toolbar = (Toolbar)findViewById(R.id.toolbar);
@@ -69,6 +77,9 @@ public class PreviewActivity extends AppCompatActivity {
         addBus = (FloatingActionButton)findViewById(R.id.add_bus);
         addBtn = (FloatingActionsMenu)findViewById(R.id.add_btn);
         addHotel = (FloatingActionButton)findViewById(R.id.add_hotel);
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Fetching trip plan");
+        progressDialog.show();
     }
 
     void loadList() {
@@ -90,6 +101,12 @@ public class PreviewActivity extends AppCompatActivity {
         }
     }
 
+    void dismissProgressDialog() {
+        if(loadedEntities>=3){
+            progressDialog.dismiss();
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,6 +116,8 @@ public class PreviewActivity extends AppCompatActivity {
         loadList();
 
         fetchHotel();
+        fetchRemoteFlights();
+        fetchRemoteBuses();
 
         flightsTv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -168,9 +187,13 @@ public class PreviewActivity extends AppCompatActivity {
                     writer.write(response.toString());
                     writer.flush();
                     writer.close();
+                    hotelTv.setText("Hotels (1)");
                 } catch (IOException e) {
                     Log.d("option", "unable to write file");
+                    hotelTv.setText("Hotels (0)");
                 }
+                loadedEntities++;
+                dismissProgressDialog();
             }
         }, new Response.ErrorListener() {
             @Override
@@ -182,6 +205,79 @@ public class PreviewActivity extends AppCompatActivity {
                 file = new File(Environment.getExternalStorageDirectory().toString()+"/SwishData/"+prefs.getTripId());
                 if(file.isDirectory())
                     file.delete();
+                hotelTv.setText("Hotels (0)");
+                loadedEntities++;
+                dismissProgressDialog();
+            }
+        }, this);
+        VolleySingleton.getInstance().getRequestQueue().add(swishRequest);
+    }
+
+    void fetchRemoteFlights() {
+        String url = Config.SWISH_API_URL+"/flights/"+prefs.getTripId()+"/fetch";
+        SwishRequest swishRequest = new SwishRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                dbAdapter.open();
+                dbAdapter.removeAllFlightsOfTrip(prefs.getTripId());
+                Gson gson = new Gson();
+                try {
+                    JSONArray jsonArray = new JSONArray(response.getString("data"));
+                    for(int i=0; i<jsonArray.length(); i++) {
+                        Flight flight = gson.fromJson(jsonArray.getJSONObject(i).toString(), Flight.class);
+                        dbAdapter.addNewFlight(flight, prefs.getTripId());
+                    }
+                    ArrayList<Flight> list = dbAdapter.findFlights(prefs.getTripId(), new ArrayList<Flight>());
+                    flightsTv.setText("Flights (" + list.size() + ")");
+                } catch (JSONException e) {
+                    Toast.makeText(PreviewActivity.this, "Something went wrong", Toast.LENGTH_LONG).show();
+                }
+                dbAdapter.close();
+                loadedEntities++;
+                dismissProgressDialog();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("option", error.toString());
+                Toast.makeText(PreviewActivity.this, "Connection Timeout", Toast.LENGTH_LONG).show();
+                loadedEntities++;
+                dismissProgressDialog();
+            }
+        }, this);
+        VolleySingleton.getInstance().getRequestQueue().add(swishRequest);
+    }
+
+    void fetchRemoteBuses() {
+        String url = Config.SWISH_API_URL+"/buses/"+prefs.getTripId()+"/fetch";
+        SwishRequest swishRequest = new SwishRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                dbAdapter.open();
+                dbAdapter.removeAllBusesOfTrip(prefs.getTripId());
+                Gson gson = new Gson();
+                try {
+                    JSONArray jsonArray = new JSONArray(response.getString("data"));
+                    for(int i=0; i<jsonArray.length(); i++) {
+                        Bus bus = gson.fromJson(jsonArray.getJSONObject(i).toString(), Bus.class);
+                        dbAdapter.addNewBus(bus, prefs.getTripId());
+                    }
+                    ArrayList<Bus> list2 = dbAdapter.findBuses(prefs.getTripId(), new ArrayList<Bus>());
+                    busesTv.setText("Buses (" + list2.size() + ")");
+                } catch (JSONException e) {
+                    Toast.makeText(PreviewActivity.this, "Something went wrong", Toast.LENGTH_LONG).show();
+                }
+                dbAdapter.close();
+                loadedEntities++;
+                dismissProgressDialog();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("option", error.toString());
+                Toast.makeText(PreviewActivity.this, "Connection Timeout", Toast.LENGTH_LONG).show();
+                loadedEntities++;
+                dismissProgressDialog();
             }
         }, this);
         VolleySingleton.getInstance().getRequestQueue().add(swishRequest);

@@ -83,38 +83,7 @@ public class FlightSearchResultActivity extends AppCompatActivity {
         prefs = new SwishPreferences(this);
     }
 
-    void fetchRemote(final int trip_id) {
-        String url = Config.SWISH_API_URL+"/flights/"+trip_id+"/fetch";
-        SwishRequest swishRequest = new SwishRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                dbAdapter.open();
-                dbAdapter.removeAllFlightsOfTrip(trip_id);
-                searchList.removeAll(searchList);
-                searchList.clear();
-                Gson gson = new Gson();
-                try {
-                    JSONArray jsonArray = new JSONArray(response.getString("data"));
-                    for(int i=0; i<jsonArray.length(); i++) {
-                        Flight flight = gson.fromJson(jsonArray.getJSONObject(i).toString(), Flight.class);
-                        dbAdapter.addNewFlight(flight, prefs.getTripId());
-                    }
-                    searchList = dbAdapter.findFlights(prefs.getTripId(), searchList);
-                    adapter.notifyDataSetChanged();
-                } catch (JSONException e) {
-                    Toast.makeText(FlightSearchResultActivity.this, "Something went wrong", Toast.LENGTH_LONG).show();
-                }
-                dbAdapter.close();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d("option", error.toString());
-                Toast.makeText(FlightSearchResultActivity.this, "Connection Timeout", Toast.LENGTH_LONG).show();
-            }
-        }, this);
-        VolleySingleton.getInstance().getRequestQueue().add(swishRequest);
-    }
+
 
     void loadList() {
         if(intent.getStringExtra("what").equals("plan")) {
@@ -122,7 +91,6 @@ public class FlightSearchResultActivity extends AppCompatActivity {
             searchList = dbAdapter.findFlights(prefs.getTripId(), searchList);
             adapter.notifyDataSetChanged();
             dbAdapter.close();
-            fetchRemote(prefs.getTripId());
         }else{
             File file = new File(Environment.getExternalStorageDirectory().toString()+"/SwishData/flightsearch.txt");
             String respponse = "", current;
@@ -242,7 +210,6 @@ public class FlightSearchResultActivity extends AppCompatActivity {
             @Override
             public void onResponse(String response) {
                 progressDialog.dismiss();
-
                 Gson gson = new Gson();
                 try {
                     JSONObject jsonObject = new JSONObject(response);
@@ -279,8 +246,13 @@ public class FlightSearchResultActivity extends AppCompatActivity {
             protected Map<String, String> getParams() throws AuthFailureError {
                 HashMap<String, String> params = new HashMap<String, String>();
                 params.put("timestamp", flight.timestamp);
-                params.put("origin", flight.origin);
-                params.put("destination", flight.destination);
+                if(flight.stops.equals("0") || flight.stops.isEmpty()){
+                    params.put("origin", flight.origin);
+                    params.put("destination", flight.destination);
+                }else if(flight.onwardflights!=null) {
+                    params.put("origin", flight.origin);
+                    params.put("destination", flight.onwardflights.get(flight.onwardflights.size()-1).destination);
+                }
                 params.put("deptime", flight.deptime);
                 params.put("arrtime", flight.arrtime);
                 params.put("duration", flight.duration);

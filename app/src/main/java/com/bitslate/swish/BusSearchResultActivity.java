@@ -90,7 +90,6 @@ public class BusSearchResultActivity extends AppCompatActivity {
             searchList = dbAdapter.findBuses(prefs.getTripId(), searchList);
             adapter.notifyDataSetChanged();
             dbAdapter.close();
-            fetchRemote(prefs.getTripId());
         } else {
             File file = new File(Environment.getExternalStorageDirectory().toString() + "/SwishData/bussearch.txt");
             String respponse = "", current;
@@ -193,39 +192,6 @@ public class BusSearchResultActivity extends AppCompatActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    void fetchRemote(final int trip_id) {
-        String url = Config.SWISH_API_URL+"/buses/"+trip_id+"/fetch";
-        SwishRequest swishRequest = new SwishRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                dbAdapter.open();
-                dbAdapter.removeAllBusesOfTrip(trip_id);
-                searchList.removeAll(searchList);
-                searchList.clear();
-                Gson gson = new Gson();
-                try {
-                    JSONArray jsonArray = new JSONArray(response.getString("data"));
-                    for(int i=0; i<jsonArray.length(); i++) {
-                        Bus bus = gson.fromJson(jsonArray.getJSONObject(i).toString(), Bus.class);
-                        dbAdapter.addNewBus(bus, prefs.getTripId());
-                    }
-                    searchList = dbAdapter.findBuses(prefs.getTripId(), searchList);
-                    adapter.notifyDataSetChanged();
-                } catch (JSONException e) {
-                    Toast.makeText(BusSearchResultActivity.this, "Something went wrong", Toast.LENGTH_LONG).show();
-                }
-                dbAdapter.close();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d("option", error.toString());
-                Toast.makeText(BusSearchResultActivity.this, "Connection Timeout", Toast.LENGTH_LONG).show();
-            }
-        }, this);
-        VolleySingleton.getInstance().getRequestQueue().add(swishRequest);
     }
 
 

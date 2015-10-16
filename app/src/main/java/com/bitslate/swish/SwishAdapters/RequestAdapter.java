@@ -2,10 +2,11 @@ package com.bitslate.swish.SwishAdapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -45,18 +46,27 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
         holder.name.setText(planItem.creator.fname);
         Glide.with(context).load("https://graph.facebook.com/"+planItem.creator.fb_id+"/picture").into(holder.imageView);
         if(planItem.pivot.status == 0) {
-            holder.status.setText("Pending");
+            holder.status.setText("");
+            holder.accept.setVisibility(View.VISIBLE);
+            holder.decline.setVisibility(View.VISIBLE);
         }else if(planItem.pivot.status == 1) {
-            holder.status.setText("Accepted");
+            holder.status.setText(Html.fromHtml("<font color='#4CAF50'>Accepted</font>"));
+            holder.accept.setVisibility(View.VISIBLE);
+            holder.decline.setVisibility(View.GONE);
         }else{
-            holder.status.setText("Declined");
+            holder.status.setText(Html.fromHtml("<font color='#F44336'>Declined</font>"));
+            holder.accept.setVisibility(View.GONE);
+            holder.decline.setVisibility(View.VISIBLE);
         }
 
         holder.accept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 holder.status.setText("Please wait...");
-                planItem.accept(prefs.getUser().id, RequestAdapter.this);
+                if(planItem.pivot.status == 1)
+                    planItem.decline(prefs.getUser().id, RequestAdapter.this);
+                else
+                    planItem.accept(prefs.getUser().id, RequestAdapter.this);
             }
         });
 
@@ -64,7 +74,10 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
             @Override
             public void onClick(View view) {
                 holder.status.setText("Please wait...");
-                planItem.decline(prefs.getUser().id, RequestAdapter.this);
+                if(planItem.pivot.status == -1)
+                    planItem.accept(prefs.getUser().id, RequestAdapter.this);
+                else
+                    planItem.decline(prefs.getUser().id, RequestAdapter.this);
             }
         });
     }
@@ -80,8 +93,8 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
         TextView name;
         ImageView imageView;
         TextView status;
-        Button accept;
-        Button decline;
+        ImageButton accept;
+        ImageButton decline;
 
         public RequestViewHolder(View itemView) {
             super(itemView);
@@ -89,8 +102,8 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
             name = (TextView)itemView.findViewById(R.id.name);
             imageView = (ImageView)itemView.findViewById(R.id.image);
             status = (TextView)itemView.findViewById(R.id.status);
-            accept = (Button)itemView.findViewById(R.id.accept);
-            decline = (Button)itemView.findViewById(R.id.decline);
+            accept = (ImageButton)itemView.findViewById(R.id.accept);
+            decline = (ImageButton)itemView.findViewById(R.id.decline);
         }
     }
 }

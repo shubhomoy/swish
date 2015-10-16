@@ -15,6 +15,7 @@ import com.bitslate.swish.FriendsActivity;
 import com.bitslate.swish.R;
 import com.bitslate.swish.SwishObjects.User;
 import com.bitslate.swish.SwishUtilities.SwishDatabase;
+import com.bitslate.swish.SwishUtilities.SwishPreferences;
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
@@ -28,12 +29,14 @@ public class FbUserAdapter extends RecyclerView.Adapter<FbUserAdapter.FbUserView
     Context context;
     int planId;
     SwishDatabase database;
+    SwishPreferences prefs;
 
     public FbUserAdapter(Context context, ArrayList<User> list, int planId) {
         this.list = list;
         this.context = context;
         this.planId = planId;
         database = new SwishDatabase(context);
+        prefs = new SwishPreferences(context);
     }
 
     @Override
@@ -46,11 +49,11 @@ public class FbUserAdapter extends RecyclerView.Adapter<FbUserAdapter.FbUserView
     @Override
     public void onBindViewHolder(final FbUserViewHolder holder, int position) {
         final User obj = list.get(position);
-        Glide.with(context).load("https://graph.facebook.com/"+obj.fb_id+"/picture").into(holder.imageView);
+        Glide.with(context).load("https://graph.facebook.com/" + obj.fb_id + "/picture").into(holder.imageView);
         holder.name.setText(obj.fname);
-        if(obj.plans.size() == 0) {
+        if (obj.plans.size() == 0) {
             holder.status.setImageDrawable(context.getResources().getDrawable(R.drawable.circle_grey_outline));
-        }else if(obj.plans.size()>0){
+        } else if (obj.plans.size() > 0) {
             holder.status.setImageDrawable(context.getResources().getDrawable(R.drawable.circle_green));
         }
 
@@ -58,10 +61,10 @@ public class FbUserAdapter extends RecyclerView.Adapter<FbUserAdapter.FbUserView
             @Override
             public void onClick(View view) {
                 database.open();
-                if(obj.plans.size() == 0) {
+                if (obj.plans.size() == 0) {
                     obj.plans.add(database.findItinery(planId));
                     obj.addPlan(planId);
-                }else{
+                } else {
                     obj.plans.remove(0);
                     obj.removePlan(planId);
                 }
@@ -69,6 +72,8 @@ public class FbUserAdapter extends RecyclerView.Adapter<FbUserAdapter.FbUserView
                 FbUserAdapter.this.notifyDataSetChanged();
             }
         });
+
+
     }
 
     @Override
@@ -76,7 +81,7 @@ public class FbUserAdapter extends RecyclerView.Adapter<FbUserAdapter.FbUserView
         return list.size();
     }
 
-    public class FbUserViewHolder extends RecyclerView.ViewHolder{
+    public class FbUserViewHolder extends RecyclerView.ViewHolder {
 
         ImageView imageView;
         TextView name;
@@ -85,10 +90,10 @@ public class FbUserAdapter extends RecyclerView.Adapter<FbUserAdapter.FbUserView
 
         public FbUserViewHolder(View itemView) {
             super(itemView);
-            imageView = (ImageView)itemView.findViewById(R.id.image);
-            name = (TextView)itemView.findViewById(R.id.name);
-            status = (ImageView)itemView.findViewById(R.id.status);
-            item = (LinearLayout)itemView.findViewById(R.id.item);
+            imageView = (ImageView) itemView.findViewById(R.id.image);
+            name = (TextView) itemView.findViewById(R.id.name);
+            status = (ImageView) itemView.findViewById(R.id.status);
+            item = (LinearLayout) itemView.findViewById(R.id.item);
         }
     }
 }

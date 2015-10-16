@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bitslate.swish.PreviewActivity;
 import com.bitslate.swish.R;
@@ -67,7 +68,11 @@ public class ItineraryPlanAdapter extends RecyclerView.Adapter<ItineraryPlanAdap
                 builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        Log.d("option", list.get(position).creator.fname);
+                        if(list.get(position).user_id != prefs.getUser().id) {
+                            Toast.makeText(context, "Cannot delete this trip.\nOnly the creator can delete.", Toast.LENGTH_LONG).show();
+                        }else{
+
+                        }
                     }
                 });
                 builder.setNegativeButton("No", new DialogInterface.OnClickListener() {

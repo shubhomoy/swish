@@ -76,6 +76,8 @@ public class FlightAdapter extends RecyclerView.Adapter<FlightAdapter.FlightHold
             }catch (ArrayIndexOutOfBoundsException e){
                 holder.sourceToDestTv.setText(flight.origin+" to "+flight.destination+ " ("+flight.stops+" stops)");
             }
+        }else{
+            holder.sourceToDestTv.setText(flight.origin+" to "+flight.destination + " (0 stops)");
         }
         holder.item.setBackgroundColor(Color.parseColor(flight.itemColor));
         if(what.equals("search")) {

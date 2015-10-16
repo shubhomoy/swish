@@ -196,12 +196,14 @@ public class SwishDatabase {
             PlanItem item = new PlanItem();
             item.name = c.getString(c.getColumnIndex(Main_Table_Itinerary_Name));
             item.id = c.getInt(c.getColumnIndex(Main_Table_Id));
+            item.user_id = c.getInt(c.getColumnIndex(Main_Table_User_Id));
             //item.created_at = c.getString(c.getColumnIndex(Main_Table_Itinerary_Date));
             list.add(item);
             while (c.moveToNext()) {
                 PlanItem item2 = new PlanItem();
                 item2.name = c.getString(c.getColumnIndex(Main_Table_Itinerary_Name));
                 item2.id = c.getInt(c.getColumnIndex(Main_Table_Id));
+                item2.user_id = c.getInt(c.getColumnIndex(Main_Table_User_Id));
                 //item2.created_at = c.getString(c.getColumnIndex(Main_Table_Itinerary_Date));
                 list.add(item2);
             }
