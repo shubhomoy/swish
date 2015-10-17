@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
@@ -133,7 +134,7 @@ public class HotelAdapter extends RecyclerView.Adapter<HotelAdapter.HotelHolder>
         String location = hotel.loc.full+"\n"+hotel.loc.location+"\n"+hotel.loc.pin+"\n"+hotel.loc.state;
         holder.locationTv.setText(location);
 
-        holder.locationTv.setOnClickListener(new View.OnClickListener() {
+        holder.map.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://maps.google.com/maps?q=loc:" + hotel.loc.lat + "," + hotel.loc.lon + " (" + hotel.loc.location + ")"));
@@ -227,6 +228,7 @@ public class HotelAdapter extends RecyclerView.Adapter<HotelAdapter.HotelHolder>
         TextView discount;
         TextView removeBtn;
         Button showFacilitiesBtn;
+        ImageButton map;
 
         public HotelHolder(View itemView) {
             super(itemView);
@@ -241,6 +243,7 @@ public class HotelAdapter extends RecyclerView.Adapter<HotelAdapter.HotelHolder>
             minimum_price = (TextView)itemView.findViewById(R.id.minimum_price_tv);
             discount = (TextView)itemView.findViewById(R.id.discount_tv);
             showFacilitiesBtn = (Button)itemView.findViewById(R.id.show_facilities_btn);
+            map = (ImageButton)itemView.findViewById(R.id.map_btn);
             ratingBar.setEnabled(false);
 
             if(what.equals("search"))

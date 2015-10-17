@@ -1,6 +1,8 @@
 package com.bitslate.swish;
 
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AlertDialog;
@@ -8,8 +10,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
@@ -45,6 +49,7 @@ public class ShowHotelActivity extends AppCompatActivity {
     TextView removeBtn;
     Button showFacilitiesBtn;
     Toolbar toolbar;
+    ImageButton map;
 
 
     void instantiate() {
@@ -60,10 +65,12 @@ public class ShowHotelActivity extends AppCompatActivity {
         minimum_price = (TextView)findViewById(R.id.minimum_price_tv);
         discount = (TextView)findViewById(R.id.discount_tv);
         showFacilitiesBtn = (Button)findViewById(R.id.show_facilities_btn);
+        map = (ImageButton)findViewById(R.id.map_btn);
         ratingBar.setEnabled(false);
         toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Hotel");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -183,11 +190,29 @@ public class ShowHotelActivity extends AppCompatActivity {
                 }
             });
 
+            map.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://maps.google.com/maps?q=loc:" + hotel.loc.lat + "," + hotel.loc.lon + " (" + hotel.loc.location + ")"));
+                    startActivity(intent);
+                }
+            });
+
         } catch (FileNotFoundException e) {
             Toast.makeText(ShowHotelActivity.this, "No hotel found", Toast.LENGTH_SHORT).show();
             finish();
         } catch (IOException e) {
 
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
