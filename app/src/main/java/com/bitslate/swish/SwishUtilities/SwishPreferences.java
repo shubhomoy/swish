@@ -24,6 +24,10 @@ public class SwishPreferences {
 
     public int getTripId(){return prefs.getInt("trip_id", 0);}
 
+    public String getGcmId() {
+        return prefs.getString(SwishGCM.PROPERTY_REG_ID,"");
+    }
+
     public void setInitialization(boolean b) {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("first_time", b);
