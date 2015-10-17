@@ -4,6 +4,15 @@
     android:background="@color/primaryColor"
     android:layout_height="match_parent">
 
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="100dp"
+        android:src="@mipmap/ic_launcher"/>
+
     <TextView
         android:id="@+id/title"
         android:layout_width="match_parent"
@@ -11,8 +20,9 @@
         android:text="Swish"
         android:textColor="#ffffff"
         android:textSize="45sp"
+        android:layout_below="@+id/logo"
         android:gravity="center_horizontal|center_vertical"
-        android:layout_marginTop="100dp"/>
+        android:layout_marginTop="10dp"/>
 
     <TextView
         android:id="@+id/subtitle"
@@ -23,7 +33,7 @@
         android:textSize="20sp"
         android:gravity="center_horizontal|center_vertical"
         android:layout_margin="20dp"
-        android:text="Plan trips with your travel mates seamlessly\n\nMake your trip a memorable one"/>
+        android:text="Connect with your friends and start planning your trip now!"/>
 
     <com.facebook.login.widget.LoginButton
         android:id="@+id/login_button"

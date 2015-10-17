@@ -55,7 +55,7 @@ public class PreviewActivity extends AppCompatActivity {
     Toolbar toolbar;
     TextView dateTv;
     SwishPreferences prefs;
-    com.getbase.floatingactionbutton.FloatingActionButton addFlight, addBus, addHotel;
+    com.getbase.floatingactionbutton.FloatingActionButton addFlight, addBus, addHotel, addPhoto;
     FloatingActionsMenu addBtn;
     ProgressDialog progressDialog;
 
@@ -77,6 +77,7 @@ public class PreviewActivity extends AppCompatActivity {
         addBus = (FloatingActionButton)findViewById(R.id.add_bus);
         addBtn = (FloatingActionsMenu)findViewById(R.id.add_btn);
         addHotel = (FloatingActionButton)findViewById(R.id.add_hotel);
+        addPhoto = (FloatingActionButton)findViewById(R.id.add_photo);
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Fetching trip plan");
         progressDialog.show();
@@ -140,7 +141,7 @@ public class PreviewActivity extends AppCompatActivity {
         hotelTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(PreviewActivity.this, HotelSearchResultActivity.class);
+                Intent intent = new Intent(PreviewActivity.this, ShowHotelActivity.class);
                 intent.putExtra("what", "plan");
                 intent.putExtra("itinerary", itinerary);
                 startActivityForResult(intent, 0);
@@ -170,6 +171,13 @@ public class PreviewActivity extends AppCompatActivity {
             public void onClick(View view) {
                 addBtn.collapse();
                 startActivityForResult(new Intent(PreviewActivity.this, SearchHotelActivity.class), 0);
+            }
+        });
+
+        addPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
             }
         });
     }

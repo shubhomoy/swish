@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -26,6 +27,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.bitslate.swish.SwishAdapters.CityAdapter;
 import com.bitslate.swish.SwishObjects.City;
+import com.bitslate.swish.SwishObjects.HotelPrice;
 import com.bitslate.swish.SwishUtilities.Config;
 import com.bitslate.swish.SwishUtilities.SwishDatabase;
 import com.bitslate.swish.SwishUtilities.SwishPreferences;
@@ -45,7 +47,6 @@ import java.util.Iterator;
 public class SearchHotelActivity extends AppCompatActivity {
 
     EditText cityEt;
-    Button searchBtn;
     EditText checkinEt;
     EditText checkoutEt;
     ListView cityList;
@@ -62,11 +63,14 @@ public class SearchHotelActivity extends AppCompatActivity {
     String checindate = null, checkoutdate = null;
 
     public static ArrayList<String> hotelIds;
+    public static ArrayList<HotelPrice> hotelPrice;
+
     public static Activity activity;
     boolean citySelected = false;
     boolean checkInSelected = false;
     boolean checkOutSelected = false;
 
+    String hotel_ids;
 
     void instantiate() {
         activity = this;
@@ -75,7 +79,6 @@ public class SearchHotelActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("Search hotels");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         cityEt = (EditText)findViewById(R.id.city_et);
-        searchBtn = (Button) findViewById(R.id.search_btn);
         checkinEt = (EditText)findViewById(R.id.check_in_et);
         checkoutEt = (EditText)findViewById(R.id.check_out_et);
         cityList = (ListView) findViewById(R.id.city_list);
@@ -91,6 +94,7 @@ public class SearchHotelActivity extends AppCompatActivity {
         month = calendar.get(Calendar.MONTH);
         day = calendar.get(Calendar.DAY_OF_MONTH);
         hotelIds = new ArrayList<String>();
+        hotelPrice = new ArrayList<HotelPrice>();
     }
 
     private DatePickerDialog.OnDateSetListener checkInDateListener = new DatePickerDialog.OnDateSetListener() {
@@ -200,9 +204,22 @@ public class SearchHotelActivity extends AppCompatActivity {
             }
         });
 
-        searchBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.search_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
+            case R.id.search:
                 if(citySelected && checkInSelected && checkOutSelected) {
                     hotelIds.removeAll(hotelIds);
                     hotelIds.clear();
@@ -217,7 +234,10 @@ public class SearchHotelActivity extends AppCompatActivity {
                                 Iterator<String> iterator = data.keys();
                                 Gson gson = new Gson();
                                 while(iterator.hasNext()) {
-                                    hotelIds.add(iterator.next());
+                                    hotel_ids = iterator.next();
+                                    hotelIds.add(hotel_ids);
+                                    HotelPrice price = gson.fromJson(data.getString(hotel_ids), HotelPrice.class);
+                                    hotelPrice.add(price);
                                 }
                             } catch (JSONException e) {
                                 Log.d("option", "parse err");
@@ -240,15 +260,6 @@ public class SearchHotelActivity extends AppCompatActivity {
                 }else{
                     Toast.makeText(SearchHotelActivity.this, "Invalid input", Toast.LENGTH_SHORT).show();
                 }
-            }
-        });
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
                 break;
         }
         return super.onOptionsItemSelected(item);

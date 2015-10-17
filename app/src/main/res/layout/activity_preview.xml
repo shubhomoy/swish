@@ -165,6 +165,15 @@
             fab:fab_colorNormal="@color/primaryColor"
             fab:fab_colorPressed="@color/primaryColorDark"
             fab:fab_size="mini" />
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/add_photo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/ic_photo_camera_white_36dp"
+            fab:fab_colorNormal="@color/primaryColor"
+            fab:fab_colorPressed="@color/primaryColorDark"
+            fab:fab_size="mini" />
     </com.getbase.floatingactionbutton.FloatingActionsMenu>
 
 </RelativeLayout>

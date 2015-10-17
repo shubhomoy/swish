@@ -23,11 +23,13 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.bitslate.swish.SwishAdapters.HotelAdapter;
 import com.bitslate.swish.SwishObjects.Hotel;
+import com.bitslate.swish.SwishObjects.HotelPrice;
 import com.bitslate.swish.SwishUtilities.Config;
 import com.bitslate.swish.SwishUtilities.SwishDatabase;
 import com.bitslate.swish.SwishUtilities.SwishPreferences;
 import com.bitslate.swish.SwishUtilities.VolleySingleton;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -76,7 +78,7 @@ public class HotelSearchResultActivity extends AppCompatActivity{
     ProgressDialog progressDialog;
 
     int i = 0, size =4;
-
+    String hotel_id;
     void loadList() {
         if(intent.getStringExtra("what").equals("search")){
             String ids = "%5B";
@@ -97,13 +99,18 @@ public class HotelSearchResultActivity extends AppCompatActivity{
                                     allLoaded = true;
                                 }
                                 while(iterator.hasNext()) {
-                                    JSONObject hotelData = new JSONObject(data.getString(iterator.next()));
+                                    hotel_id = iterator.next();
+                                    JSONObject hotelData = new JSONObject(data.getString(hotel_id));
                                     Hotel hotel = gson.fromJson(hotelData.getString("hotel_data_node"), Hotel.class);
+                                    JSONObject meta = new JSONObject(hotelData.getString("hotel_geo_node"));
+                                    JSONObject location = new JSONObject(meta.getString("location"));
+                                    hotel.loc.lat = location.getString("lat");
+                                    hotel.loc.lon = location.getString("long");
                                     list.add(hotel);
                                 }
                                 adapter.notifyDataSetChanged();
                             } catch (JSONException e) {
-
+                                Log.d("option", "ex");
                             }
                         }
                     }, new Response.ErrorListener() {
@@ -113,24 +120,6 @@ public class HotelSearchResultActivity extends AppCompatActivity{
                 }
             });
             VolleySingleton.getInstance().getRequestQueue().add(jsonObjectRequest);
-        }else{
-            try {
-                FileReader reader = new FileReader(Environment.getExternalStorageDirectory().toString()+"/SwishData/"+prefs.getTripId()+"/hotel.txt");
-                String response = "", current = null;
-                BufferedReader bufferedReader = new BufferedReader(reader);
-                while((current = bufferedReader.readLine())!=null) {
-                    response += current;
-                }
-                Gson gson = new Gson();
-                Hotel hotel = gson.fromJson(response, Hotel.class);
-                list.add(hotel);
-                adapter.notifyDataSetChanged();
-            } catch (FileNotFoundException e) {
-                Toast.makeText(HotelSearchResultActivity.this, "No item found", Toast.LENGTH_SHORT).show();
-                finish();
-            } catch (IOException e) {
-
-            }
         }
     }
 
@@ -145,7 +134,7 @@ public class HotelSearchResultActivity extends AppCompatActivity{
         recyclerView.setHasFixedSize(true);
         list = new ArrayList<Hotel>();
         done = (FloatingActionButton)findViewById(R.id.done);
-        adapter = new HotelAdapter(this, list, intent.getStringExtra("what"));
+        adapter = new HotelAdapter(this, list, SearchHotelActivity.hotelPrice, intent.getStringExtra("what"));
         recyclerView.setAdapter(adapter);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         animationZoomOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.zoom_out);
@@ -182,6 +171,10 @@ public class HotelSearchResultActivity extends AppCompatActivity{
             public void onClick(View view) {
                 if(adapter.selected>-1){
                     Hotel hotel = list.get(adapter.selected);
+                    HotelPrice price = SearchHotelActivity.hotelPrice.get(adapter.selected);
+                    hotel.op = price.op;
+                    hotel.mp = price.mp;
+                    hotel.discount = String.valueOf(Float.parseFloat(hotel.op) - Float.parseFloat(hotel.mp));
                     Gson gson = new Gson();
                     String res = gson.toJson(hotel);
                     try {
@@ -191,7 +184,6 @@ public class HotelSearchResultActivity extends AppCompatActivity{
                         FileWriter writer = new FileWriter(Environment.getExternalStorageDirectory().toString()+"/SwishData/"+prefs.getTripId()+"/hotel.txt");
                         writer.write(res);
                         writer.close();
-
                         new UploadFile().execute();
                     } catch (FileNotFoundException e) {
 

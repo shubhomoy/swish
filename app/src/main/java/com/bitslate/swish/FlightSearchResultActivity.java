@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +33,7 @@ import com.bitslate.swish.SwishUtilities.SwishDatabase;
 import com.bitslate.swish.SwishUtilities.SwishPreferences;
 import com.bitslate.swish.SwishUtilities.SwishRequest;
 import com.bitslate.swish.SwishUtilities.VolleySingleton;
+import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
@@ -152,6 +154,21 @@ public class FlightSearchResultActivity extends AppCompatActivity {
                     TextView durationTv = (TextView)v.findViewById(R.id.duration_tv);
                     TextView removeBtn = (TextView)v.findViewById(R.id.remove_btn);
                     TextView departure = (TextView)v.findViewById(R.id.departure_date_tv);
+                    ImageView logo = (ImageView)v.findViewById(R.id.airline_logo);
+                    if(flight.airline.equals("Air India")) {
+                        Glide.with(FlightSearchResultActivity.this).load(Config.AIRINDIA_LOGO_URL).into(logo);
+                    }else if(flight.airline.equals("Vistara")){
+                        Glide.with(FlightSearchResultActivity.this).load(Config.VISTARA_LOGO_URL).into(logo);
+                    }else if(flight.airline.equals("Jet Airways")){
+                        Glide.with(FlightSearchResultActivity.this).load(Config.JETAIRWAYS_LOGO_URL).into(logo);
+                    }else if(flight.airline.equals("spicejet")){
+                        Glide.with(FlightSearchResultActivity.this).load(Config.SPICEJET_LOGO_URL).into(logo);
+                    }else if(flight.airline.equals("IndiGo")){
+                        Glide.with(FlightSearchResultActivity.this).load(Config.INDIGO_LOGO_URL).into(logo);
+                    }else if(flight.airline.equals("goair")){
+                        Glide.with(FlightSearchResultActivity.this).load(Config.GOAIR_LOGO_URL).into(logo);
+                    }
+
                     removeBtn.setVisibility(View.GONE);
 
                     departure.setText(intent.getStringExtra("date"));

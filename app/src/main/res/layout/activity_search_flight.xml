@@ -1,100 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_alignParentBottom="true"
+        android:scaleType="centerCrop"
+        android:src="@mipmap/flight_search" />
+
     <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/primaryColor"
         android:minHeight="?attr/actionBarSize"
-        android:id="@+id/toolbar"
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <EditText
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/from_et_wrap"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/toolbar"
-        android:id="@+id/from_et"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="15dp"
-        android:hint="From (Full name)"/>
-
-    <EditText
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:layout_below="@+id/from_et"
-        android:id="@+id/to_et"
+        android:layout_marginTop="20dp">
+
+        <EditText
+            android:id="@+id/from_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="From (Full name)"
+            android:padding="15dp" />
+    </android.support.design.widget.TextInputLayout>
+
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/to_et_wrap"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="15dp"
-        android:hint="To (Full name)"/>
-    <EditText
+        android:layout_below="@+id/from_et_wrap"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp">
+
+        <EditText
+            android:id="@+id/to_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/from_et_wrap"
+            android:hint="To (Full name)"
+            android:padding="15dp" />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/departure_date_et_wrap"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/to_et_wrap"
         android:layout_marginBottom="20dp"
         android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:id="@+id/departure_date_et"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Departure Date"
-        android:inputType="date"
-        android:padding="15dp"
-        android:layout_below="@+id/to_et"/>
+        android:layout_marginRight="20dp">
 
-    <Button
-        android:id="@+id/search_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Search"
-        android:layout_below="@+id/departure_date_et"
-        android:layout_centerInParent="true"/>
+        <EditText
+            android:id="@+id/departure_date_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Departure Date"
+            android:inputType="date"
+            android:padding="15dp" />
+    </android.support.design.widget.TextInputLayout>
 
     <TextView
         android:id="@+id/from_search_tv"
-        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/from_et"
-        android:text="Searching..."
-        android:padding="20dp"
+        android:layout_below="@+id/from_et_wrap"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:background="#fff"/>
+        android:background="#fff"
+        android:padding="20dp"
+        android:text="Searching..."
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/to_search_tv"
-        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/to_et"
-        android:text="Searching..."
+        android:layout_below="@+id/to_et_wrap"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="#fff"
         android:padding="20dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:background="#fff"/>
+        android:text="Searching..."
+        android:visibility="gone" />
 
     <ListView
-        android:background="#fff"
         android:id="@+id/from_list"
-        android:visibility="gone"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/from_et"/>
+        android:layout_below="@+id/from_et_wrap"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="#fff"
+        android:visibility="gone" />
 
     <ListView
-        android:background="#fff"
         android:id="@+id/to_list"
-        android:visibility="gone"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/to_et"/>
+        android:layout_below="@+id/to_et_wrap"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="#fff"
+        android:visibility="gone" />
 
 </RelativeLayout>

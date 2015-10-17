@@ -2,7 +2,9 @@ package com.bitslate.swish.SwishAdapters;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
@@ -21,6 +24,7 @@ import com.bitslate.swish.FlightSearchResultActivity;
 import com.bitslate.swish.HotelSearchResultActivity;
 import com.bitslate.swish.R;
 import com.bitslate.swish.SwishObjects.Hotel;
+import com.bitslate.swish.SwishObjects.HotelPrice;
 import com.bitslate.swish.SwishUtilities.SwishDatabase;
 import com.bitslate.swish.SwishUtilities.SwishPreferences;
 import com.bumptech.glide.Glide;
@@ -35,16 +39,20 @@ public class HotelAdapter extends RecyclerView.Adapter<HotelAdapter.HotelHolder>
 
     Context context;
     ArrayList<Hotel> list;
+    ArrayList<HotelPrice> priceList;
     String what;
     SwishDatabase dbAdapter;
     SwishPreferences prefs;
     public int selected = -1;
     Animation animationZoomIn, animationZoomOut;
+    AlertDialog.Builder builder;
 
-    public HotelAdapter(Context context, ArrayList<Hotel> list, String what) {
+    public HotelAdapter(Context context, ArrayList<Hotel> list, ArrayList<HotelPrice> priceList, String what) {
         this.context = context;
         this.list = list;
         this.what = what;
+        this.builder = new AlertDialog.Builder(context);
+        this.priceList = priceList;
         prefs = new SwishPreferences(context);
         dbAdapter = new SwishDatabase(context);
         animationZoomIn = AnimationUtils.loadAnimation(context.getApplicationContext(), R.anim.zoom_in);
@@ -61,23 +69,45 @@ public class HotelAdapter extends RecyclerView.Adapter<HotelAdapter.HotelHolder>
     }
 
     @Override
-    public void onBindViewHolder(HotelHolder holder, final int position) {
+    public void onBindViewHolder(final HotelHolder holder, final int position) {
         final Hotel hotel = list.get(position);
+        HotelPrice price = priceList.get(position);
         holder.hotelNameTv.setText(hotel.name);
         holder.ratingBar.setRating(hotel.rating);
+        holder.original_price.setText(price.op);
+        holder.minimum_price.setText(price.mp);
+        holder.discount.setText(String.valueOf(Float.parseFloat(price.op) - Float.parseFloat(price.mp))+" Discount");
         String facility = "";
         int i;
         if(hotel.facilities != null ) {
             if(hotel.facilities.all !=null) {
                 for (i = 0; i < hotel.facilities.all.size(); i++)
-                    facility += hotel.facilities.all.get(i) + "\n";
+                    facility += "* "+hotel.facilities.all.get(i) + "\n";
             }else{
                 facility += "Facilitites N/A";
             }
         }else{
             facility += "Facilitites N/A";
         }
-        holder.facilityTv.setText(facility);
+        //holder.facilityTv.setText(facility);
+        final String finalFacility = facility;
+        holder.showFacilitiesBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                builder.setTitle("Facilities");
+                View v = LayoutInflater.from(context).inflate(R.layout.hotel_details_dialog, null);
+                TextView details = (TextView)v.findViewById(R.id.detail_text);
+                details.setText(finalFacility);
+                builder.setView(v);
+                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+                builder.create().show();
+            }
+        });
         String contact = "<b><font color='#000'>Web</font></b><br/>";
         if(hotel.contact.web != null) {
             for (i = 0; i < hotel.contact.web.size(); i++)
@@ -102,6 +132,15 @@ public class HotelAdapter extends RecyclerView.Adapter<HotelAdapter.HotelHolder>
         holder.contactTv.setText(Html.fromHtml(contact));
         String location = hotel.loc.full+"\n"+hotel.loc.location+"\n"+hotel.loc.pin+"\n"+hotel.loc.state;
         holder.locationTv.setText(location);
+
+        holder.locationTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://maps.google.com/maps?q=loc:" + hotel.loc.lat + "," + hotel.loc.lon + " (" + hotel.loc.location + ")"));
+                context.startActivity(intent);
+            }
+        });
+
         if(hotel.img != null) {
             if (hotel.img.size() > 0) {
                 holder.hotelImage.setVisibility(View.VISIBLE);
@@ -180,22 +219,28 @@ public class HotelAdapter extends RecyclerView.Adapter<HotelAdapter.HotelHolder>
         TextView hotelNameTv;
         RatingBar ratingBar;
         ImageView hotelImage;
-        TextView facilityTv;
         TextView contactTv;
         TextView locationTv;
         LinearLayout item;
+        TextView original_price;
+        TextView minimum_price;
+        TextView discount;
         TextView removeBtn;
+        Button showFacilitiesBtn;
 
         public HotelHolder(View itemView) {
             super(itemView);
             hotelNameTv = (TextView)itemView.findViewById(R.id.hotel_name_tv);
             ratingBar = (RatingBar)itemView.findViewById(R.id.ratingBar);
             hotelImage = (ImageView)itemView.findViewById(R.id.hotel_image);
-            facilityTv = (TextView)itemView.findViewById(R.id.facility_tv);
             contactTv = (TextView)itemView.findViewById(R.id.contact_tv);
             locationTv = (TextView)itemView.findViewById(R.id.location_tv);
             item = (LinearLayout)itemView.findViewById(R.id.list_item);
             removeBtn = (TextView)itemView.findViewById(R.id.remove_btn);
+            original_price = (TextView)itemView.findViewById(R.id.original_price_tv);
+            minimum_price = (TextView)itemView.findViewById(R.id.minimum_price_tv);
+            discount = (TextView)itemView.findViewById(R.id.discount_tv);
+            showFacilitiesBtn = (Button)itemView.findViewById(R.id.show_facilities_btn);
             ratingBar.setEnabled(false);
 
             if(what.equals("search"))

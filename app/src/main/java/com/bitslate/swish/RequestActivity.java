@@ -1,6 +1,8 @@
 package com.bitslate.swish;
 
+import android.app.NotificationManager;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -68,6 +70,8 @@ public class RequestActivity extends AppCompatActivity {
         list = new ArrayList<PlanItem>();
         adapter = new RequestAdapter(this, list);
         recyclerView.setAdapter(adapter);
+        NotificationManager notificationManager = (NotificationManager)getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(1);
     }
 
     @Override

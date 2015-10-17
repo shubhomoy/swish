@@ -12,14 +12,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bitslate.swish.FlightSearchResultActivity;
 import com.bitslate.swish.R;
 import com.bitslate.swish.SwishObjects.Flight;
+import com.bitslate.swish.SwishUtilities.Config;
 import com.bitslate.swish.SwishUtilities.SwishDatabase;
 import com.bitslate.swish.SwishUtilities.SwishPreferences;
+import com.bumptech.glide.Glide;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -61,6 +65,20 @@ public class FlightAdapter extends RecyclerView.Adapter<FlightAdapter.FlightHold
     @Override
     public void onBindViewHolder(final FlightHolder holder, final int position) {
         final Flight flight = list.get(position);
+        if(flight.airline.equals("Air India")) {
+            Glide.with(context).load(Config.AIRINDIA_LOGO_URL).into(holder.airlineLogo);
+        }else if(flight.airline.equals("Vistara")){
+            Glide.with(context).load(Config.VISTARA_LOGO_URL).into(holder.airlineLogo);
+        }else if(flight.airline.equals("Jet Airways")){
+            Glide.with(context).load(Config.JETAIRWAYS_LOGO_URL).into(holder.airlineLogo);
+        }else if(flight.airline.equals("spicejet")){
+            Glide.with(context).load(Config.SPICEJET_LOGO_URL).into(holder.airlineLogo);
+        }else if(flight.airline.equals("IndiGo")){
+            Glide.with(context).load(Config.INDIGO_LOGO_URL).into(holder.airlineLogo);
+        }else if(flight.airline.equals("goair")){
+            Glide.with(context).load(Config.GOAIR_LOGO_URL).into(holder.airlineLogo);
+        }
+        Log.d("option", flight.airline);
         holder.airlineTv.setText(flight.airline);
         holder.arrTimeTv.setText(flight.arrtime);
         holder.deptTimeTv.setText(flight.deptime);
@@ -158,7 +176,7 @@ public class FlightAdapter extends RecyclerView.Adapter<FlightAdapter.FlightHold
 
     public class FlightHolder extends RecyclerView.ViewHolder{
 
-        LinearLayout item;
+        RelativeLayout item;
         TextView airlineTv;
         TextView sourceToDestTv;
         TextView arrTimeTv;
@@ -167,9 +185,11 @@ public class FlightAdapter extends RecyclerView.Adapter<FlightAdapter.FlightHold
         TextView durationTv;
         TextView removeBtn;
         TextView departureDate;
+        ImageView airlineLogo;
 
         public FlightHolder(View itemView) {
             super(itemView);
+            airlineLogo = (ImageView)itemView.findViewById(R.id.airline_logo);
             airlineTv = (TextView)itemView.findViewById(R.id.airline_tv);
             sourceToDestTv = (TextView)itemView.findViewById(R.id.source_dest_tv);
             arrTimeTv = (TextView)itemView.findViewById(R.id.arrtime_tv);
@@ -178,7 +198,7 @@ public class FlightAdapter extends RecyclerView.Adapter<FlightAdapter.FlightHold
             durationTv = (TextView)itemView.findViewById(R.id.duration_tv);
             removeBtn = (TextView)itemView.findViewById(R.id.remove_btn);
             departureDate = (TextView)itemView.findViewById(R.id.departure_date_tv);
-            item = (LinearLayout)itemView.findViewById(R.id.list_item);
+            item = (RelativeLayout)itemView.findViewById(R.id.list_item);
             if(what.equals("search"))
                 removeBtn.setVisibility(View.GONE);
         }

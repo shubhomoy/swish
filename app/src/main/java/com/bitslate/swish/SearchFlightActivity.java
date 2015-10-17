@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -51,7 +52,6 @@ public class SearchFlightActivity extends AppCompatActivity {
     EditText fromEt;
     EditText toEt;
     EditText departureDateEt;
-    Button searchBtn;
     TextView fromSearchTv, toSearchTv;
     ProgressDialog progressDialog;
     ListView fromList, toList;
@@ -77,7 +77,6 @@ public class SearchFlightActivity extends AppCompatActivity {
         fromSearchTv = (TextView)findViewById(R.id.from_search_tv);
         toSearchTv = (TextView)findViewById(R.id.to_search_tv);
         departureDateEt = (EditText)findViewById(R.id.departure_date_et);
-        searchBtn = (Button)findViewById(R.id.search_btn);
         fromList = (ListView)findViewById(R.id.from_list);
         toList = (ListView)findViewById(R.id.to_list);
         progressDialog = new ProgressDialog(this);
@@ -221,7 +220,7 @@ public class SearchFlightActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if(!charSequence.toString().equals(toCity)) {
+                if (!charSequence.toString().equals(toCity)) {
                     toSearchTv.setVisibility(View.VISIBLE);
                     VolleySingleton.getInstance().getRequestQueue().cancelAll("to_search");
                     String url = "https://airport.api.aero/airport/match/" + charSequence.toString() + "?user_key=" + Config.IATA_API_KEY;
@@ -292,14 +291,6 @@ public class SearchFlightActivity extends AppCompatActivity {
             }
         });
 
-        searchBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(checkInput()) {
-                    search();
-                }
-            }
-        });
     }
 
     boolean checkInput() {
@@ -310,10 +301,21 @@ public class SearchFlightActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.search_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
+                break;
+            case R.id.search:
+                if(checkInput()) {
+                    search();
+                }
                 break;
         }
         return super.onOptionsItemSelected(item);

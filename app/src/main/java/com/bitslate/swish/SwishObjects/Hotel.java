@@ -26,6 +26,10 @@ public class Hotel implements Serializable{
     public Contact contact;
     public Location loc;
 
+    public String op;
+    public String mp;
+    public String discount;
+
     public String itemColor = "#ffffff";
     public class Facility {
         public ArrayList<String> all;
@@ -50,6 +54,8 @@ public class Hotel implements Serializable{
         public String pin;
         public String state;
         public String location;
+        public String lon;
+        public String lat;
     }
 
     public void remove(int trip_id) {
