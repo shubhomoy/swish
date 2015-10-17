@@ -170,7 +170,7 @@
             android:id="@+id/add_photo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@mipmap/ic_photo_camera_white_36dp"
+            android:src="@mipmap/ic_camera_alt_white_18dp"
             fab:fab_colorNormal="@color/primaryColor"
             fab:fab_colorPressed="@color/primaryColorDark"
             fab:fab_size="mini" />
