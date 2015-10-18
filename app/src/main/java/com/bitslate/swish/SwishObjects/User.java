@@ -28,8 +28,12 @@ public class User {
     public String lname;
     public ArrayList<PlanItem> plans;
     public PlanItem.Pivot pivot;
-
+    public ArrayList<Suggestions> suggestions;
     SwishPreferences prefs;
+
+    public class Suggestions{
+        public String hotel_id;
+    }
 
     public void addPlan(final int planId) {
         prefs = new SwishPreferences(MyApplication.getAppContext());

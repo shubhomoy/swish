@@ -19,6 +19,7 @@ import java.util.ArrayList;
  * Created by shubhomoy on 22/9/15.
  */
 public class Hotel implements Serializable{
+    public String id;
     public String name;
     public float rating;
     public ArrayList<Image> img;

@@ -1,6 +1,8 @@
 package com.bitslate.swish.SwishFragments;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -16,12 +18,16 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.bitslate.swish.BusSearchResultActivity;
 import com.bitslate.swish.FlightSearchResultActivity;
 import com.bitslate.swish.FriendsActivity;
@@ -67,6 +73,8 @@ import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by shubhomoy on 17/10/15.
@@ -85,6 +93,7 @@ public class PreviewFragment extends Fragment {
     ProgressDialog progressDialog;
     File image_file;
     String timeStamp;
+    Button askBtn;
 
     int loadedEntities = 0;
     final int CAMERA_CAPTURE_TAG = 5;
@@ -102,6 +111,7 @@ public class PreviewFragment extends Fragment {
         addBtn = (FloatingActionsMenu)v.findViewById(R.id.add_btn);
         addHotel = (FloatingActionButton)v.findViewById(R.id.add_hotel);
         addPhoto = (FloatingActionButton)v.findViewById(R.id.add_photo);
+        askBtn = (Button)v.findViewById(R.id.ask_btn);
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setMessage("Fetching trip plan");
         progressDialog.show();
@@ -204,7 +214,66 @@ public class PreviewFragment extends Fragment {
             }
         });
 
+        askBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                View v = LayoutInflater.from(getActivity()).inflate(R.layout.ask_dialog, null);
+                final EditText question = (EditText)v.findViewById(R.id.ask_question);
+                builder.setTitle("Ask for hotels");
+                builder.setMessage("Ask your friends to suggested some hotels");
+                builder.setView(v);
+                builder.setPositiveButton("Ask", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        if(question.getText().toString().trim().length()>0) {
+                            sendQuestion(question.getText().toString());
+                        }
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+                builder.create().show();
+            }
+        });
+
         return v;
+    }
+
+    void sendQuestion(final String question) {
+        String url = Config.SWISH_API_URL+"/ask";
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Toast.makeText(getActivity(), "Sent", Toast.LENGTH_LONG).show();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("option", error.toString());
+                Toast.makeText(getActivity(), "Connection Timeout", Toast.LENGTH_LONG).show();
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                HashMap<String, String> params = new HashMap<String, String>();
+                params.put("question", question);
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("id", String.valueOf(prefs.getUser().fb_id));
+                headers.put("accessToken", prefs.getAccessToken());
+                return headers;
+            }
+        };
+        VolleySingleton.getInstance().getRequestQueue().add(stringRequest);
     }
 
     void openCamera() {
@@ -388,18 +457,19 @@ public class PreviewFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode != CAMERA_CAPTURE_TAG)
             loadList();
-        else{
-            Log.d("option", image_file.toString());
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setTitle("Upload");
-            builder.setMessage("Do you want to upload this picture?");
-            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    new UploadPictureHttp().execute("img_" + timeStamp + ".jpg", Environment.getExternalStorageDirectory().toString() + "/SwishData/" + prefs.getTripId() + "/photos/img_" + timeStamp + ".jpg");
-                }
-            });
-            builder.create().show();
+        else if(requestCode == CAMERA_CAPTURE_TAG && resultCode == Activity.RESULT_OK){
+            if(image_file!=null && image_file.exists()){
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Upload");
+                builder.setMessage("Do you want to upload this picture?");
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        new UploadPictureHttp().execute("img_" + timeStamp + ".jpg", Environment.getExternalStorageDirectory().toString() + "/SwishData/" + prefs.getTripId() + "/photos/img_" + timeStamp + ".jpg");
+                    }
+                });
+                builder.create().show();
+            }
         }
     }
 

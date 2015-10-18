@@ -171,6 +171,7 @@ public class HotelSearchResultActivity extends AppCompatActivity{
             public void onClick(View view) {
                 if(adapter.selected>-1){
                     Hotel hotel = list.get(adapter.selected);
+                    hotel.id = SearchHotelActivity.hotelIds.get(adapter.selected);
                     HotelPrice price = SearchHotelActivity.hotelPrice.get(adapter.selected);
                     hotel.op = price.op;
                     hotel.mp = price.mp;

@@ -292,6 +292,9 @@ public class PlanListActivity extends AppCompatActivity {
             case R.id.notification:
                 startActivityForResult(new Intent(PlanListActivity.this, RequestActivity.class), 1);
                 break;
+            case R.id.suggestions:
+                startActivity(new Intent(this, ViewSuggestionsActivity.class));
+                break;
             case R.id.about:
                 startActivity(new Intent(this, AboutActivity.class));
         }

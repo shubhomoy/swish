@@ -114,6 +114,14 @@
 
     </ScrollView>
 
+    <Button
+        android:id="@+id/ask_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="Ask for hotels"
+        android:layout_margin="16dp"/>
+
     <com.getbase.floatingactionbutton.FloatingActionsMenu
         android:id="@+id/add_btn"
         android:layout_width="wrap_content"

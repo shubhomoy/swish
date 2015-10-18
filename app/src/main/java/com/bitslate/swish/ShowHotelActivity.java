@@ -1,5 +1,6 @@
 package com.bitslate.swish;
 
+import android.app.IntentService;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -9,6 +10,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -50,6 +52,7 @@ public class ShowHotelActivity extends AppCompatActivity {
     Button showFacilitiesBtn;
     Toolbar toolbar;
     ImageButton map;
+    Button suggestBtn;
 
 
     void instantiate() {
@@ -61,6 +64,7 @@ public class ShowHotelActivity extends AppCompatActivity {
         locationTv = (TextView)findViewById(R.id.location_tv);
         item = (LinearLayout)findViewById(R.id.list_item);
         removeBtn = (TextView)findViewById(R.id.remove_btn);
+        suggestBtn = (Button)findViewById(R.id.suggest_btn);
         original_price = (TextView)findViewById(R.id.original_price_tv);
         minimum_price = (TextView)findViewById(R.id.minimum_price_tv);
         discount = (TextView)findViewById(R.id.discount_tv);
@@ -87,7 +91,7 @@ public class ShowHotelActivity extends AppCompatActivity {
             }
             Gson gson = new Gson();
             final Hotel hotel = gson.fromJson(response, Hotel.class);
-
+            Log.d("option", hotel.id);
             hotelNameTv.setText(hotel.name);
             ratingBar.setRating(hotel.rating);
             original_price.setText(hotel.op);
@@ -194,6 +198,15 @@ public class ShowHotelActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://maps.google.com/maps?q=loc:" + hotel.loc.lat + "," + hotel.loc.lon + " (" + hotel.loc.location + ")"));
+                    startActivity(intent);
+                }
+            });
+
+            suggestBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(ShowHotelActivity.this, FriendListActivity.class);
+                    intent.putExtra("hotel_id", hotel.id);
                     startActivity(intent);
                 }
             });

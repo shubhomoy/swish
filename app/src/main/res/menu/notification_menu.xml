@@ -5,6 +5,10 @@
         app:showAsAction="always"
         android:icon="@mipmap/ic_notifications_none_white_24dp"/>
 
+    <item android:id="@+id/suggestions"
+        android:title="Hotel Suggestions"
+        android:showAsAction="never"/>
+
     <item android:id="@+id/about"
         android:title="About"
         android:showAsAction="never"/>

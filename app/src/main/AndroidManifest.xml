@@ -84,6 +84,14 @@
             android:name=".ShowHotelActivity"
             android:label="@string/app_name" >
         </activity>
+        <activity
+            android:name=".FriendListActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name=".ViewSuggestionsActivity"
+            android:label="@string/app_name" >
+        </activity>
         <activity android:name="com.facebook.FacebookActivity"
             android:configChanges=
                 "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
