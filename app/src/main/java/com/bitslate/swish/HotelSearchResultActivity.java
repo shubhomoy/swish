@@ -106,6 +106,7 @@ public class HotelSearchResultActivity extends AppCompatActivity{
                                     JSONObject location = new JSONObject(meta.getString("location"));
                                     hotel.loc.lat = location.getString("lat");
                                     hotel.loc.lon = location.getString("long");
+                                    hotel.id = hotel_id;
                                     list.add(hotel);
                                 }
                                 adapter.notifyDataSetChanged();
@@ -171,7 +172,6 @@ public class HotelSearchResultActivity extends AppCompatActivity{
             public void onClick(View view) {
                 if(adapter.selected>-1){
                     Hotel hotel = list.get(adapter.selected);
-                    hotel.id = SearchHotelActivity.hotelIds.get(adapter.selected);
                     HotelPrice price = SearchHotelActivity.hotelPrice.get(adapter.selected);
                     hotel.op = price.op;
                     hotel.mp = price.mp;

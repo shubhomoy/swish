@@ -130,7 +130,6 @@ public class ViewSuggestionsActivity extends AppCompatActivity {
                                 hotel.loc.lat = location.getString("lat");
                                 hotel.loc.lon = location.getString("long");
                                 list.add(hotel);
-                                Log.d("option", hotel.name);
                             }
                             adapter.notifyDataSetChanged();
                         } catch (JSONException e) {

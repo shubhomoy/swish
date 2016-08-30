@@ -23,6 +23,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -141,6 +142,7 @@ public class SearchFlightActivity extends AppCompatActivity {
                 builder.create().show();
             }
         });
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(60000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         VolleySingleton.getInstance().getRequestQueue().add(jsonObjectRequest);
     }
 
@@ -161,7 +163,7 @@ public class SearchFlightActivity extends AppCompatActivity {
                 if (!charSequence.toString().equals(fromCity)) {
                     fromSearchTv.setVisibility(View.VISIBLE);
                     VolleySingleton.getInstance().getRequestQueue().cancelAll("from_search");
-                    String url = "https://airport.api.aero/airport/match/" + charSequence.toString() + "?user_key=" + Config.IATA_API_KEY;
+                        String url = "https://airport.api.aero/airport/match/" + charSequence.toString() + "?user_key=" + Config.IATA_API_KEY;
                     StringRequest jsonObjectRequest = new StringRequest(Request.Method.GET, url,
                             new Response.Listener<String>() {
                                 @Override
